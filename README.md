@@ -1,30 +1,50 @@
-# YoloWeb — Streamlit YOLO Object Detection
+# Industrial X-Ray Defect Judgment System — AI Inspection PoC
 
-A simple **Streamlit** web app that runs **YOLO (Ultralytics)** object detection
-on user-uploaded images. Supports multiple models, adjustable confidence/IoU,
-and works locally or on Streamlit Community Cloud.
+A Streamlit-based web application demonstrating an **automated 2D X-Ray quality inspection pipeline** powered by **YOLO (Ultralytics)** and **PyTorch**. Designed to detect internal defects (such as void defects) in industrial manufacturing components.
 
-## _Demo App_
+> **Disclaimer / NDA Notice:**  
+> This repository serves as a Proof-of-Concept (PoC) demonstration for portfolio purposes. To strictly comply with Non-Disclosure Agreements (NDA) and protect client intellectual property, all proprietary industrial X-ray imagery and client-trained model weights have been replaced with open-source sample datasets and dummy models.
 
+---
+
+## 📸 Demo Preview
+
+![X-Ray Inspection Demo](docs/demo_preview.png)
+
+### 🌐 Live Interactive Demo
 <p>
   <a href="https://davidinations-yolo.streamlit.app/" target="_blank">
-    <strong>YOLO X-Ray Inspection Demo</strong>
+    <strong>👉 Open YOLO X-Ray Inspection Streamlit App</strong>
   </a>
 </p>
 
-## Features
+*Note: Hosted on Streamlit Community Cloud (free tier). If the application is in sleep mode, please allow ~60 seconds for the server to wake up.*
 
-- **Model selection** in the sidebar:
-  - Pick a **default model** from the `models/` folder (auto-loaded).
-  - Or **upload your own** `.pt` model file directly in the UI.
-- **Sample-image buttons** in the sidebar: each button auto-loads a test image
-  from `test_images/` that matches the selected default model (e.g.
-  `sample1.pt` ↔ `sample1.png`). A button is enabled only when its matching
-  model is selected.
-- **Image upload**: JPG, PNG, BMP.
-- **Confidence threshold** slider and **IoU threshold** slider.
-- Shows the **original** and **annotated** image side by side.
-- Results **table** with class, confidence, bounding box, and per-class counts.
+---
+
+## Key Features
+
+- **Model Selection & Custom Upload:**
+  - Auto-loads pre-configured lightweight default models (`.pt`) from the `models/` directory.
+  - Supports custom model uploads directly via the UI.
+- **Automated Sample Testing:**
+  - One-click testing using pre-loaded X-ray test images matching specific default model targets.
+- **Real-Time Confidence & IoU Tuning:**
+  - Interactive sidebar sliders to dynamically tweak detection sensitivity (Confidence) and Non-Maximum Suppression thresholds (IoU).
+- **Side-by-Side Visual Inspection:**
+  - Displays original scan image alongside the annotated AI bounding-box detection output.
+- **Defect Metrics Summary Table:**
+  - Itemized table showing detected defect classes, confidence scores, bounding box coordinates, and per-class total counts.
+
+---
+
+## Technical Stack
+
+- **Computer Vision & AI:** Ultralytics YOLOv11 / YOLOv8, PyTorch, OpenCV
+- **Data & Metrics Processing:** NumPy, Pandas
+- **Frontend / Deployment:** Streamlit, Streamlit Community Cloud
+
+---
 
 ## Getting started
 
