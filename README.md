@@ -9,7 +9,7 @@ A Streamlit-based web application demonstrating an **automated 2D X-Ray quality 
 
 ## 📸 Demo Preview
 
-![X-Ray Inspection Demo](docs/demo_preview.png)
+![X-Ray Inspection Demo](Screenshot_Demo.png)
 
 ### 🌐 Live Interactive Demo
 <p>
