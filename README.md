@@ -6,9 +6,11 @@ and works locally or on Streamlit Community Cloud.
 
 ## _Demo App_
 
-<a href="https://davidinations-yolo.streamlit.app/" target="_blank" rel="noopener noreferrer">
-  YOLO X-Ray Inspection Demo
-</a>
+<p>
+  <a href="https://davidinations-yolo.streamlit.app/" target="_blank">
+    <strong>YOLO X-Ray Inspection Demo ↗</strong>
+  </a>
+</p>
 
 ## Features
 
