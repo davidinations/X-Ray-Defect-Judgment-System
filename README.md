@@ -8,7 +8,7 @@ and works locally or on Streamlit Community Cloud.
 
 <p>
   <a href="https://davidinations-yolo.streamlit.app/" target="_blank">
-    <strong>YOLO X-Ray Inspection Demo ↗</strong>
+    <strong>YOLO X-Ray Inspection Demo</strong>
   </a>
 </p>
 
