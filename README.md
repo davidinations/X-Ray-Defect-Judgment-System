@@ -82,6 +82,26 @@ streamlit run app.py
 2. Enable Streamlit Community Cloud on the repo.
 3. Streamlit reads `requirements.txt` automatically — no build step.
 
+### Keeping the app awake
+
+Streamlit Community Cloud sends an app to sleep after **12 hours without
+traffic**. Pushing commits does **not** count as traffic (it only triggers a
+redeploy), so this repo pings the app URL instead:
+
+- `.github/workflows/keep_awake.yml` — runs every 6 hours (plus manual
+  `workflow_dispatch`) and `curl`s `https://davidinations-yolo.streamlit.app/`
+  with a cache-busting query string.
+- If you rename the app or deploy under a different subdomain, update `APP_URL`
+  in that workflow.
+- A plain `curl` **without a cookie jar loops forever** (the app answers with a
+  `303` to `share.streamlit.io/-/auth/app`), so the workflow passes `-c/-b`.
+- The ping prevents sleep but cannot *wake* an already-sleeping app. To do that,
+  visit the app and click "**Yes, get this app back up!**".
+
+GitHub's scheduler is best-effort (runs can be late or skipped), so for stricter
+uptime add a free external monitor such as UptimeRobot or cron-job.org pointed
+at the app URL every 30 minutes.
+
 ## Configuration defaults
 
 The default confidence and IoU values match the original Flask template's
@@ -101,5 +121,6 @@ app.py            # Streamlit application
 requirements.txt  # Pinned dependencies
 models/           # Optional default .pt model(s)
 test_images/      # Optional sample test images matched by model name
+.github/workflows/keep_awake.yml  # Scheduled ping to keep the cloud app awake
 README.md         # This file
 ```

@@ -1,19 +1,57 @@
 name: Keep Streamlit Awake
+
+# Streamlit Community Cloud sleeps apps after 12 hours without traffic.
+# Pushing commits to the repo does NOT count as traffic, so this workflow
+# pings the deployed app URL instead (with a cache-busting query string).
+#
+# Note: the app answers a plain GET with a 303 to share.streamlit.io/-/auth/app,
+# so a cookie jar (-c/-b) is required or curl loops on redirects forever.
 on:
   schedule:
-    - cron: "0 */10 * * *" # Runs every 10 hours
+    # Every 6 hours (UTC). GitHub's scheduler can be late or skip runs, so
+    # this leaves 2x margin under the 12-hour sleep window.
+    - cron: "0 */6 * * *"
   workflow_dispatch: # Allows you to run it manually to test
 
-jobs:
-  keep_awake:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+permissions: {} # No repo writes needed anymore
 
-      - name: Push Empty Commit
+concurrency:
+  group: keep-awake
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Ping app with retries
+        env:
+          APP_URL: https://davidinations-yolo.streamlit.app/
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
-          git commit --allow-empty -m "Keep awake"
-          git push
+          set -u
+          jar="$(mktemp)"
+          url="${APP_URL}?keepalive=$(date +%s)"
+
+          for attempt in 1 2 3; do
+            rm -f "$jar" /tmp/body.html
+            code=$(curl -sS -L -c "$jar" -b "$jar" \
+              -o /tmp/body.html -w '%{http_code}' \
+              --max-time 90 \
+              -A 'Mozilla/5.0 (X11; Linux x86_64) keep-awake' \
+              "$url") || code="000"
+            echo "attempt ${attempt} -> HTTP ${code}"
+
+            if [ "$code" = "200" ] && grep -qi 'streamlit' /tmp/body.html; then
+              if grep -qi 'gone to sleep' /tmp/body.html; then
+                echo "::error::App is asleep. Visit the app and click 'Yes, get this app back up!'."
+                exit 1
+              fi
+              echo "App is awake and responding. Keep-alive done."
+              exit 0
+            fi
+
+            [ "$attempt" -lt 3 ] && sleep 30
+          done
+
+          echo "::warning::App did not respond with 200 after 3 attempts (sleeping, crashed, or over resource limits)."
+          exit 1
